@@ -5,23 +5,25 @@
 #go visit his github and star it! :D 
 # https://github.com/bahamas10/ysap/blob/main/code/2025-08-21-progress-bar/progress-bar
 
+BATCHSIZE=1
+
 progress-bar() {
 	local current=$1
 	local len=$2
 
+	local bar_char='|'
+	local empty_char=' '
 	local length=50
 	local perc_done=$((current * 100 / len))
 	local num_bars=$((perc_done * length / 100))
 
-	echo "processing $current/$len ($perc_done%)"
-
 	local i
 	local s='['
-	for ((i = 0; i < perc_done; i++)); do
-		s+='|'
+	for ((i = 0; i < num_bars; i++)); do
+		s+=$bar_char
 	done
 	for ((i = num_bars; i < length; i++)); do
-		s+=' '
+		s+=$empty_char
 	done
 	s+=']'
 
@@ -41,10 +43,10 @@ files=(./**/*cache)
 len=${#files[@]}
 echo "found $len files"
 
-i=0
-for file in "${files[@]}"; do
+for ((i = 0; i < len; i += BATCHSIZE)); do
 	progress-bar "$((i+1))" "$len"
-	process-files "$file"
-
-	((i++))
+	process-files "${files[@]:i:BATCHSIZE}"
 done
+progress-bar "$len" "$len"
+
+echo
