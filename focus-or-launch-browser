@@ -1,0 +1,9 @@
+#!/bin/bash
+# Check if epiphany is running
+if hyprctl clients | grep -q "class: org.gnome.Epiphany"; then
+    # Focus the existing window
+    hyprctl dispatch focuswindow "class:org.gnome.Epiphany"
+else
+    # Launch new instance
+    epiphany &
+fi
